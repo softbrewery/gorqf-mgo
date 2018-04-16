@@ -1,0 +1,38 @@
+language: go
+
+sudo: required
+
+services:
+  - docker
+
+branches:
+  only:
+    - master
+
+matrix:
+  include:
+    - go: "1.5"
+    - go: "1.6"
+    - go: "1.7"
+    - go: "1.8"
+    - go: "1.9"
+    - go: "1.10"
+    - go: "tip"
+  allow_failures:
+    - go: "tip"
+
+before_install:
+  - go get github.com/onsi/ginkgo/ginkgo
+  - go get github.com/onsi/gomega
+  - export PATH=$PATH:$HOME/gopath/bin
+  - docker pull mongo
+  - docker run --name mongo -p 27017:27017 -d mongo
+
+install:
+  - go get -v -t ./...
+  
+script:
+  - make test-travis 
+
+after_success:
+  - bash <(curl -s https://codecov.io/bash)
