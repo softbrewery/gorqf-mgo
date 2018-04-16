@@ -7,5 +7,6 @@ Go library to add support for mgo in gorqf
 
 ## Install
 ```shell
+$ go get github.com/softbrewery/gorqf
 $ go get github.com/softbrewery/gorqf-mgo
 ```
