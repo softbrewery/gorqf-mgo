@@ -14,9 +14,10 @@ $ go get github.com/softbrewery/gorqf-mgo
 ## Usage
 
 ```go
+// Create rqf parser
 parser := rqf.NewParser()
 
-// json filter comming from rest request
+// Json filter comming from rest request
 jsonFilter := `
 {
     "fields": ["-_id","isbn"],
@@ -25,23 +26,77 @@ jsonFilter := `
     "offset":1
 }`
 
-// parse the filter
+// Parse the filter
 filter, err := parser.Parse(jsonFilter)
 if err != nil {
     // return http 400 - bad request
 }
 
-// connect to mongo
-mgoSession := getMyMongoConnection().Clone()
-defer mgoSession.Close()
+// Create query
+q := mgoSession.DB("").C("books").Find(nil)
 
-// create query
-q := mgoSession.DB("").C("fields_test").Find(nil)
-
-// inject rqf filters (fields/order/limit/offset) in MGO query
+// Inject rqf filters (fields/order/limit/offset) in MGO query
 MgoAddFilters(q, filter)
 
-// get data
+// Get data
 var data BookList
 q.All(&data)
+```
+
+---
+
+## Example
+
+### Json Filter
+```json
+{
+    "fields": ["-_id","isbn","meta.active"],
+    "order":["isbn ASC"],
+    "limit":1,
+    "offset":1
+}
+```
+### Mongo DataSet
+```json
+[
+  {
+    "id": "5ad4e9abce1d82568d3851de",
+    "name": "Book1",
+    "isbn": "C_ISBN",
+    "meta": {
+      "active": true,
+      "created": "2018-04-16T18:21:31.263Z"
+    }
+  },
+  {
+    "id": "5ad4e9abce1d82568d3851df",
+    "name": "Book2",
+    "isbn": "A_ISBN",
+    "meta": {
+      "active": true,
+      "created": "2018-04-16T18:21:31.263Z"
+    }
+  },
+  {
+    "id": "5ad4e9abce1d82568d3851e0",
+    "name": "Book3",
+    "isbn": "B_ISBN",
+    "meta": {
+      "active": true,
+      "created": "2018-04-16T18:21:31.263Z"
+    }
+  }
+]
+```
+
+### Result
+```json
+[
+  {
+    "isbn": "B_ISBN",
+    "meta": {
+      "active": true
+    }
+  }
+]
 ```

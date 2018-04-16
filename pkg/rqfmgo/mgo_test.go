@@ -50,7 +50,7 @@ var _ = Describe("Mgo", func() {
 
 		mgoSession.DB("").DropDatabase()
 
-		err := mgoSession.DB("").C("fields_test").Insert(
+		err := mgoSession.DB("").C("test").Insert(
 			&Book{
 				ID:   bson.NewObjectId(),
 				Name: "Book1",
@@ -92,7 +92,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			q.All(&data)
 
 			Expect(len(data)).To(Equal(3))
@@ -121,7 +121,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddFields(q, filter)
 			q.All(&data)
 
@@ -151,7 +151,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddFields(q, filter)
 			q.All(&data)
 
@@ -181,7 +181,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddFields(q, filter)
 			q.All(&data)
 
@@ -215,7 +215,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddOrder(q, filter)
 			q.All(&data)
 
@@ -242,7 +242,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddOrder(q, filter)
 			q.All(&data)
 
@@ -269,7 +269,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddOrder(q, filter)
 			q.All(&data)
 
@@ -299,7 +299,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddLimit(q, filter)
 			q.All(&data)
 
@@ -329,7 +329,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddOffset(q, filter)
 			q.All(&data)
 
@@ -358,7 +358,7 @@ var _ = Describe("Mgo", func() {
 
 			var data BookList
 
-			q := mgoSession.DB("").C("fields_test").Find(nil)
+			q := mgoSession.DB("").C("test").Find(nil)
 			MgoAddFilters(q, filter)
 			q.All(&data)
 
