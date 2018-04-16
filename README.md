@@ -31,7 +31,7 @@ jsonFilter := `
 // Parse the filter
 filter, err := parser.Parse(jsonFilter)
 if err != nil {
-    // return http 400 - bad request
+    // handle error
 }
 
 // Create query
