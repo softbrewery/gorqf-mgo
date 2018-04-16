@@ -13,6 +13,8 @@ $ go get github.com/softbrewery/gorqf-mgo
 
 ## Usage
 
+### Basic
+
 ```go
 // Create rqf parser
 parser := rqf.NewParser()
@@ -30,6 +32,47 @@ jsonFilter := `
 filter, err := parser.Parse(jsonFilter)
 if err != nil {
     // return http 400 - bad request
+}
+
+// Create query
+q := mgoSession.DB("").C("books").Find(nil)
+
+// Inject rqf filters (fields/order/limit/offset) in MGO query
+MgoAddFilters(q, filter)
+
+// Get data
+var data BookList
+q.All(&data)
+```
+
+### Validation
+
+```go
+// Create rqf parser
+parser := rqf.NewParser()
+
+// only allow isbn/name to be selected
+parser.FieldSchema( joi.String().Allow("isbn", "name") )
+
+// only allow isbn to be ordered (ASC/DESC)
+parser.OrderSchema( joi.String().Allow("isbn", "isbn ASC", "isbn DESC") )
+
+// only allow paging between 10 and 100 items
+parser.LimitSchema( joi.Int().Min(10).Max(100) )
+            
+// Json filter comming from rest request
+jsonFilter := `
+{
+    "fields": ["isbn", "name"],
+    "order":["isbn ASC"],
+    "limit":25,
+    "offset":1
+}`
+
+// Parse the filter
+filter, err := parser.Parse(jsonFilter)
+if err != nil {
+    // handle error
 }
 
 // Create query
