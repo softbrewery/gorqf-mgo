@@ -48,3 +48,12 @@ func MgoAddOffset(mq *mgo.Query, q *rqf.Filter) *rqf.Filter {
 	mq.Skip(q.Offset)
 	return q
 }
+
+// MgoAddFilters will add all filters to the Mongo Query
+func MgoAddFilters(mq *mgo.Query, q *rqf.Filter) *rqf.Filter {
+	MgoAddFields(mq, q)
+	MgoAddOrder(mq, q)
+	MgoAddLimit(mq, q)
+	MgoAddOffset(mq, q)
+	return q
+}

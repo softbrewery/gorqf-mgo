@@ -342,4 +342,34 @@ var _ = Describe("Mgo", func() {
 			fmt.Fprintln(GinkgoWriter, string(json))
 		})
 	})
+
+	Describe("MgoAddFilters", func() {
+
+		It("Should add fields/order/limit/offset filters", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"fields":["-_id","isbn"],"order":["isbn ASC"],"limit":1,"offset":1}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("fields_test").Find(nil)
+			MgoAddFilters(q, filter)
+			q.All(&data)
+
+			Expect(len(data)).To(Equal(1))
+			Expect(data[0].ID).To(BeEmpty())
+			Expect(data[0].ISBN).To(Equal("B_ISBN"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+	})
 })
