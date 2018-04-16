@@ -1,7 +1,6 @@
 package rqfmgo
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/globalsign/mgo"
@@ -19,7 +18,6 @@ func MgoAddFields(mq *mgo.Query, q *rqf.Filter) *rqf.Filter {
 			mgoSelect[field] = 1
 		}
 	}
-	fmt.Println(mgoSelect)
 	mq.Select(mgoSelect)
 	return q
 }

@@ -169,7 +169,6 @@ var _ = Describe("Mgo", func() {
 		})
 
 		It("Should return fields (sub document filter)", func() {
-
 			parser := rqf.NewParser()
 
 			jsonFilter := `{"fields":["meta.active"]}`
@@ -193,6 +192,149 @@ var _ = Describe("Mgo", func() {
 				Expect(item.ISBN).To(BeEmpty())
 				Expect(item.Meta).ToNot(BeNil())
 			}
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+	})
+
+	Describe("MgoAddOrder", func() {
+
+		It("Should order results (order isbn)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"order":["isbn"]}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("fields_test").Find(nil)
+			MgoAddOrder(q, filter)
+			q.All(&data)
+
+			Expect(data[0].ISBN).To(Equal("A_ISBN"))
+			Expect(data[1].ISBN).To(Equal("B_ISBN"))
+			Expect(data[2].ISBN).To(Equal("C_ISBN"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+
+		It("Should order results (order isbn ASC)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"order":["isbn ASC"]}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("fields_test").Find(nil)
+			MgoAddOrder(q, filter)
+			q.All(&data)
+
+			Expect(data[0].ISBN).To(Equal("A_ISBN"))
+			Expect(data[1].ISBN).To(Equal("B_ISBN"))
+			Expect(data[2].ISBN).To(Equal("C_ISBN"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+
+		It("Should order results (order isbn DESC)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"order":["isbn DESC"]}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("fields_test").Find(nil)
+			MgoAddOrder(q, filter)
+			q.All(&data)
+
+			Expect(data[0].ISBN).To(Equal("C_ISBN"))
+			Expect(data[1].ISBN).To(Equal("B_ISBN"))
+			Expect(data[2].ISBN).To(Equal("A_ISBN"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+	})
+
+	Describe("MgoLimit", func() {
+
+		It("Should limit results (limit 2)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"limit": 2}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("fields_test").Find(nil)
+			MgoAddLimit(q, filter)
+			q.All(&data)
+
+			Expect(len(data)).To(Equal(2))
+			Expect(data[0].Name).To(Equal("Book1"))
+			Expect(data[1].Name).To(Equal("Book2"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+	})
+
+	Describe("MgoOffset", func() {
+
+		It("Should skip results (offset 2)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"offset": 2}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("fields_test").Find(nil)
+			MgoAddOffset(q, filter)
+			q.All(&data)
+
+			Expect(len(data)).To(Equal(1))
+			Expect(data[0].Name).To(Equal("Book3"))
 
 			fmt.Fprintln(GinkgoWriter, "#####################################################")
 			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
