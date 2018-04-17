@@ -4,6 +4,7 @@ Go library to add support for mgo in gorqf
 
 [![Build Status](https://travis-ci.org/softbrewery/gorqf-mgo.svg?branch=master)](https://travis-ci.org/softbrewery/gorqf-mgo)
 [![codecov](https://codecov.io/gh/softbrewery/gorqf-mgo/branch/master/graph/badge.svg)](https://codecov.io/gh/softbrewery/gorqf-mgo)
+[![GitHub license](https://img.shields.io/github/license/softbrewery/gorqf-mgo.svg)](https://github.com/softbrewery/gorqf-mgo/blob/master/LICENSE)
 
 ## Install
 ```shell
