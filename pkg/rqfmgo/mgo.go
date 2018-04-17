@@ -57,3 +57,8 @@ func MgoAddFilters(mq *mgo.Query, q *rqf.Filter) *rqf.Filter {
 	MgoAddOffset(mq, q)
 	return q
 }
+
+// MgoWhere will validate where
+func MgoWhere(q *rqf.Filter) bson.M {
+	return q.Where
+}

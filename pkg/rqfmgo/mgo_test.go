@@ -74,7 +74,7 @@ var _ = Describe("Mgo", func() {
 				Name: "Book3",
 				ISBN: "B_ISBN",
 				Meta: &Meta{
-					Active:  true,
+					Active:  false,
 					Created: Now(),
 				},
 			})
@@ -364,6 +364,58 @@ var _ = Describe("Mgo", func() {
 
 			Expect(len(data)).To(Equal(1))
 			Expect(data[0].ID).To(BeEmpty())
+			Expect(data[0].ISBN).To(Equal("B_ISBN"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+	})
+
+	Describe("Mgo Where", func() {
+
+		It("should apply where if set (One)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"where": {"isbn": "A_ISBN"}}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data Book
+
+			q := mgoSession.DB("").C("test").Find(MgoWhere(filter))
+			q.One(&data)
+
+			Expect(data.ISBN).To(Equal("A_ISBN"))
+
+			fmt.Fprintln(GinkgoWriter, "#####################################################")
+			fmt.Fprintln(GinkgoWriter, "Filter: ", jsonFilter)
+			json, _ := json.MarshalIndent(data, "", "  ")
+			fmt.Fprintln(GinkgoWriter, string(json))
+		})
+
+		It("should apply where if set (All)", func() {
+			parser := rqf.NewParser()
+
+			jsonFilter := `{"where": {"meta.active": false}}`
+			filter, err := parser.Parse(jsonFilter)
+
+			Expect(err).To(BeNil())
+
+			mgoSession := connectMgo().Clone()
+			defer mgoSession.Close()
+
+			var data BookList
+
+			q := mgoSession.DB("").C("test").Find(MgoWhere(filter))
+			q.All(&data)
+
+			Expect(len(data)).To(Equal(1))
 			Expect(data[0].ISBN).To(Equal("B_ISBN"))
 
 			fmt.Fprintln(GinkgoWriter, "#####################################################")

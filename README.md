@@ -23,9 +23,10 @@ parser := rqf.NewParser()
 jsonFilter := `
 {
     "fields": ["-_id","isbn"],
-    "order":["isbn ASC"],
-    "limit":1,
-    "offset":1
+    "order": ["isbn ASC"],
+    "limit": 1,
+    "offset": 1,
+    "where": {"isbn": "A_ISBN"}
 }`
 
 // Parse the filter
@@ -34,8 +35,8 @@ if err != nil {
     // handle error
 }
 
-// Create query
-q := mgoSession.DB("").C("books").Find(nil)
+// Create query and inject where
+q := mgoSession.DB("").C("books").Find( MgoWhere(filter) )
 
 // Inject rqf filters (fields/order/limit/offset) in MGO query
 MgoAddFilters(q, filter)
@@ -59,14 +60,17 @@ parser.OrderSchema( joi.String().Allow("isbn", "isbn ASC", "isbn DESC") )
 
 // only allow paging between 10 and 100 items
 parser.LimitSchema( joi.Int().Min(10).Max(100) )
-            
+
+// Don't allow where condition
+parser.WhereSchema( joi.Any().Forbidden() )
+
 // Json filter comming from rest request
 jsonFilter := `
 {
     "fields": ["isbn", "name"],
-    "order":["isbn ASC"],
-    "limit":25,
-    "offset":1
+    "order": ["isbn ASC"],
+    "limit": 25,
+    "offset": 1
 }`
 
 // Parse the filter
